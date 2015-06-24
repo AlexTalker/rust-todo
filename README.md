@@ -1,6 +1,6 @@
 # ToDo -- simply, stupid console app that store your TODO-list
 
-Written just for fun and learning Rust work with I/O.
+Written just for fun and learning how Rust work with I/O.
 
 ## Help
 
