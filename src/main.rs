@@ -2,6 +2,8 @@ extern crate rustc_serialize;
 
 use rustc_serialize::json::{Json, ToJson, ParserError, ErrorCode };
 use std::str::FromStr;
+use std::io::prelude::*;
+use std::fs::{File, OpenOptions};
 
 #[derive(Debug)]
 struct ToDoList {
@@ -42,6 +44,12 @@ impl ToDoList {
         }
     }
 
+    fn write_to_file(&self, f: &mut File) {
+            f.seek(std::io::SeekFrom::Start(0)).unwrap();
+            f.set_len(0).unwrap();
+            f.write_all(&(self.to_json().to_string().into_bytes())).unwrap();
+    }
+
 }
 
 impl ToJson for ToDoList {
@@ -78,8 +86,6 @@ impl FromStr for ToDoList {
 
 fn main() {
     use std::env;
-    use std::io::prelude::*;
-    use std::fs::{File, OpenOptions};
     let mut vars = env::vars();
     let args = env::args();
     let mut storage: ToDoList;
@@ -119,9 +125,7 @@ fn main() {
     else if let Some(add) = env::args().position(|w| w == "add") {
         if add < (args.len() - 1) {
             storage.add(args.skip(add + 1).fold(String::new(), |s,e| s + " " + &e ));
-            storage_file.seek(std::io::SeekFrom::Start(0)).unwrap();
-            storage_file.set_len(0).unwrap();
-            storage_file.write_all(&(storage.to_json().to_string().into_bytes())).unwrap();
+            storage.write_to_file(&mut storage_file);
         }
         else {
             panic!("Нет описания после ключевого слова 'add'!");
@@ -137,6 +141,7 @@ fn main() {
                     panic!("Невозможно удалить элемент {} -- неверный ID", e);
                 }
             });
+            storage.write_to_file(&mut storage_file);
         }
     }
     else {
