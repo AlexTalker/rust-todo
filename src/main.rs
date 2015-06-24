@@ -126,6 +126,7 @@ fn main() {
         if add < (args.len() - 1) {
             storage.add(args.skip(add + 1).fold(String::new(), |s,e| s + " " + &e ));
             storage.write_to_file(&mut storage_file);
+            println!("Задача успешно добавлена!");
         }
         else {
             panic!("Нет описания после ключевого слова 'add'!");
