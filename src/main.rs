@@ -134,14 +134,21 @@ fn main() {
     }
     else if let Some(remove) = env::args().position(|w| w == "remove") {
         if remove < (args.len() - 1) {
+            let mut ids: Vec<usize> = Vec::new();
             args.skip(remove + 1).fold((),|_, e| {
                 if let Ok(id) = e.parse::<usize>() {
-                    storage.remove(id);
+                    ids.push(id);
                 }
                 else {
                     panic!("Невозможно удалить элемент {} -- неверный ID", e);
                 }
             });
+            ids.sort();
+            let mut i = 0;
+            for id in ids.iter() {
+                storage.remove(id - i);
+                i += 1;
+            }
             storage.write_to_file(&mut storage_file);
         }
     }
