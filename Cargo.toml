@@ -1,0 +1,6 @@
+[package]
+name = "ToDo"
+version = "0.1.0"
+authors = ["Alex Talker <alextalker@openmailbox.org>"]
+[dependencies]
+rustc-serialize = "0.3.15"
